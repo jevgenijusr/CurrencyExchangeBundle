@@ -1,0 +1,23 @@
+{
+    "name": "jevgenijus/currency-exchange-bundle",
+    "type": "library",
+    "description": "Google news parser in JSON format",
+    "keywords": ["google-news","parser", "json"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jevgenijus Andrijankinas",
+            "email": "j.andrijankinas@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "symfony/symfony": "~2.7|~3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jev\\CurrencyExchangeBundle\\": ""
+        },
+        "exclude-from-classmap": ["/Tests/"]
+    }
+}
