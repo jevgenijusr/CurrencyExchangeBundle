@@ -1,0 +1,4 @@
+services:
+#    jev_currency_exchange.example:
+#        class: Jev\CurrencyExchangeBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]

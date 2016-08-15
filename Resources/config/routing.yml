@@ -1,0 +1,3 @@
+jev_currency_exchange_homepage:
+    path:     /
+    defaults: { _controller: JevCurrencyExchangeBundle:Default:index }
