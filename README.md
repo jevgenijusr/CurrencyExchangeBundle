@@ -43,7 +43,7 @@ Configure the currencies you need in `config.yml` file.
 # app/config/config.yml
 jev_currency_exchange:
     base_currencies: ["EUR", "GBP"]
-    foreign_currencies: ["AUD", "BGN", "CAD", "CHF"]
+    foreign_currencies: ["AUD", "BGN", "CAD", "CHF", "CNY", "CZK", "DKK", "HKD", "HRK", "HUF", "IDR", "ILS", "INR" ]
 ```
 
 Usage
