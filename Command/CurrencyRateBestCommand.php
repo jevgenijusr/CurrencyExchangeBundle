@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class CurrencyRatesCommand extends ContainerAwareCommand
+class CurrencyRateBestCommand extends ContainerAwareCommand
 {
     private $currencyRatesManager;
     
@@ -24,7 +24,7 @@ class CurrencyRatesCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('currency:rates')
+            ->setName('currency:rate:best')
             ->setDescription('...')
             ->addArgument('argument', InputArgument::OPTIONAL, 'Argument description')
             ->addOption('option', null, InputOption::VALUE_NONE, 'Option description')
@@ -54,18 +54,10 @@ class CurrencyRatesCommand extends ContainerAwareCommand
         $question->setErrorMessage('Currency %s is invalid.');
         $foreignCurrency = $helper->ask($input, $output, $question);
         
-        foreach ($this->currencyRatesManager->getProviders() as $provider) {
-            $rates = $provider->getRates();
-            $output->writeln('');
-            $output->writeln($baseCurrency . ' rates from '. $provider->getName());
-            foreach ($rates as $currencyRate) {
-                if($currencyRate['base'] != $baseCurrency) continue;
-                foreach ($currencyRate['rates'] as $key => $rate) {
-                    if($key != $foreignCurrency) continue;
-                    $output->writeln($key .':'. $rate);
-                }
-            }
-        }
-        
+        $result = $this->currencyRatesManager->getBestRate($baseCurrency, $foreignCurrency);
+
+        $output->writeln('For base currency ' . $baseCurrency . ' and foreign currency ' . $foreignCurrency);
+        $output->writeln('best rate is provided by provider: ' . $result['provider']);
+        $output->writeln('rate: ' . $result['rate']);
     }
 }

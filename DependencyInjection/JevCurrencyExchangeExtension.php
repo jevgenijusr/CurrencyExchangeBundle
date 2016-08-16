@@ -28,37 +28,43 @@ class JevCurrencyExchangeExtension extends Extension implements CompilerPassInte
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $this->addCurrencyRateServices($container);
+        $this->addCurrencyRateServices($container, $config);
     }
     
-    private function addCurrencyRateServices(ContainerBuilder $container)
+    private function addCurrencyRateServices(ContainerBuilder $container, $config)
     {
         $container
             ->register(
                 'app.currency_provider.some_provider',
                 'Jev\CurrencyExchangeBundle\Providers\SomeProvider'
             )
-            ->addTag('currency.provider');
+            ->addTag('currency.provider')
+        ;
 
         $container
             ->register(
                 'app.currency_provider.some_other_provider',
                 'Jev\CurrencyExchangeBundle\Providers\SomeOtherProvider'
             )
-            ->addTag('currency.provider');
+            ->addTag('currency.provider')
+        ;
 
         $container
             ->register(
                 'app.currency_provider.yet_another_provider',
                 'Jev\CurrencyExchangeBundle\Providers\YetAnotherProvider'
             )
-            ->addTag('currency.provider');
+            ->addTag('currency.provider')
+        ;
 
         $container
             ->register(
                 'app.currency_rates_manager',
                 'Jev\CurrencyExchangeBundle\Services\CurrencyRatesManager'
-            );        
+            )
+            ->addArgument($config['base_currencies'])
+            ->addArgument($config['foreign_currencies'])
+        ;        
 
         $container
             ->register(
@@ -66,7 +72,17 @@ class JevCurrencyExchangeExtension extends Extension implements CompilerPassInte
                 'Jev\CurrencyExchangeBundle\Command\CurrencyRatesCommand'
             )
             ->addArgument(new Reference('app.currency_rates_manager'))
-            ->addTag('console.command');
+            ->addTag('console.command')
+        ;
+
+        $container
+            ->register(
+                'app.currency_rates_best_command',
+                'Jev\CurrencyExchangeBundle\Command\CurrencyRateBestCommand'
+            )
+            ->addArgument(new Reference('app.currency_rates_manager'))
+            ->addTag('console.command')
+        ;
     }
 
     public function process(ContainerBuilder $container)

@@ -20,9 +20,17 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('jev_currency_exchange');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+            ->children()
+                ->arrayNode('base_currencies')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('foreign_currencies')
+                        ->prototype('scalar')->end()
+                ->end()            
+            ->end()
+        ;
+
 
         return $treeBuilder;
     }
