@@ -3,6 +3,7 @@
 namespace Jev\CurrencyExchangeBundle\Services;
 
 use Jev\CurrencyExchangeBundle\Providers\ProviderInterface;
+use Doctrine\Common\Cache\CacheProvider;
 
 class CurrencyRatesManager
 {
@@ -11,12 +12,15 @@ class CurrencyRatesManager
     private $baseCurrencies;
     
     private $foreignCurrencies;
+    
+    private $cache;
 
-    public function __construct($baseCurrencies, $foreignCurrencies)
+    public function __construct($baseCurrencies, $foreignCurrencies, CacheProvider $cache)
     {
         $this->providers = array();
         $this->baseCurrencies = $baseCurrencies;
         $this->foreignCurrencies = $foreignCurrencies;
+        $this->cache = $cache;
     }
 
     public function addProvider(ProviderInterface $provider)
@@ -58,4 +62,29 @@ class CurrencyRatesManager
         
         return array('provider' => $provider, 'rate' => $max);
     }
+
+    /**
+     * Gets rates from specific provider
+     * 
+     * @param ProviderInterface $provider
+     * @param bool $date false if current date
+     * @return array
+     */
+    public function getRates(ProviderInterface $provider, $baseCurrency, $foreignCurrency, $date = false)
+    {
+        if(!$date) {
+            $date = new \DateTime('now');
+        }
+        
+        $key = $date->format('Y-m-d') . '|' . $provider->getName() . '|' . $baseCurrency;
+
+        if(!$rates = unserialize($this->cache->fetch($key)))
+        {
+            $rates = $provider->getRates($baseCurrency, $date);
+            $this->cache->save($key, serialize($rates), 10800);
+        }
+
+        return $provider->filterRates($rates, $baseCurrency, $foreignCurrency);
+    }
+
 }

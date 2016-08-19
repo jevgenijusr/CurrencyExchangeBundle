@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\Question;
 
 class CurrencyRatesCommand extends ContainerAwareCommand
 {
@@ -53,19 +54,16 @@ class CurrencyRatesCommand extends ContainerAwareCommand
         );
         $question->setErrorMessage('Currency %s is invalid.');
         $foreignCurrency = $helper->ask($input, $output, $question);
+
+        $date = new \DateTime('now');
         
         foreach ($this->currencyRatesManager->getProviders() as $provider) {
-            $rates = $provider->getRates();
+            
+            $rates = $this->currencyRatesManager->getRates($provider, $baseCurrency, $foreignCurrency, $date);
+            
             $output->writeln('');
             $output->writeln($baseCurrency . ' rates from '. $provider->getName());
-            foreach ($rates as $currencyRate) {
-                if($currencyRate['base'] != $baseCurrency) continue;
-                foreach ($currencyRate['rates'] as $key => $rate) {
-                    if($key != $foreignCurrency) continue;
-                    $output->writeln($key .':'. $rate);
-                }
-            }
+            $output->writeln($foreignCurrency .':'. $rates);
         }
-        
     }
 }

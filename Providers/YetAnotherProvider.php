@@ -12,14 +12,20 @@ class YetAnotherProvider implements ProviderInterface
         ] 
         ';
 
-    public function getRates()
+    public function getRates($baseCurrency, \DateTime $date)
     {
         $array = json_decode($this->rates, true);
         return $array;
     }
 
+
+    public function filterRates($rates, $baseCurrency, $foreignCurrency)
+    {
+        return self::NO_RATE_ERROR;
+    }
+
     public function getName()
     {
-        return 'Provider #3';
+        return 'SOME DURP PROVIDER'; //http://www.urbandictionary.com/define.php?term=durp
     }
 }

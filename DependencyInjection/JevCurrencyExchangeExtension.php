@@ -35,9 +35,26 @@ class JevCurrencyExchangeExtension extends Extension implements CompilerPassInte
     {
         $container
             ->register(
+                'guzzle.client',
+                'GuzzleHttp\Client'
+            )
+        ;
+
+        $container
+            ->register(
+                'jev_currency_exchange.cache_provider',
+                'Doctrine\Common\Cache\PhpFileCache'
+            )
+            ->addArgument("%kernel.cache_dir%/jevgenijus/currency")
+            ->addArgument(".jevgenijus.currency_cache.php")
+        ;   
+
+        $container
+            ->register(
                 'app.currency_provider.some_provider',
                 'Jev\CurrencyExchangeBundle\Providers\SomeProvider'
             )
+            ->addArgument(new Reference('guzzle.client'))            
             ->addTag('currency.provider')
         ;
 
@@ -46,6 +63,7 @@ class JevCurrencyExchangeExtension extends Extension implements CompilerPassInte
                 'app.currency_provider.some_other_provider',
                 'Jev\CurrencyExchangeBundle\Providers\SomeOtherProvider'
             )
+            ->addArgument(new Reference('guzzle.client'))
             ->addTag('currency.provider')
         ;
 
@@ -64,6 +82,7 @@ class JevCurrencyExchangeExtension extends Extension implements CompilerPassInte
             )
             ->addArgument($config['base_currencies'])
             ->addArgument($config['foreign_currencies'])
+            ->addArgument(new Reference('jev_currency_exchange.cache_provider'))
         ;        
 
         $container
