@@ -47,14 +47,7 @@ class CurrencyRatesManager
     {
         $result = array();
         foreach ($this->providers as $provider) {
-            $rates = $provider->getRates();
-            foreach ($rates as $currencyRate) {
-                if($currencyRate['base'] != $baseCurrency) continue;
-                foreach ($currencyRate['rates'] as $key => $rate) {
-                    if($key != $foreignCurrency) continue;
-                    $result[$provider->getName()] = $rate;
-                }
-            }
+            $result[$provider->getName()] = $this->getRates($provider, $baseCurrency, $foreignCurrency);
         }
 
         $max = max($result);
